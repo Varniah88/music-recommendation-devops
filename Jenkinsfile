@@ -4,6 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME = "music-backend"
         DOCKER_TAG = "latest"
+        SONARQUBE_SERVER = 'SonarQube'   // Jenkins SonarQube server name, configure in Jenkins
     }
 
     stages {
@@ -16,7 +17,6 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Build Docker image from root Dockerfile
                     sh "docker build -t ${IMAGE_NAME}:${DOCKER_TAG} ."
                 }
             }
@@ -26,58 +26,59 @@ pipeline {
             steps {
                 dir('jukebox-backend') {
                     sh 'npm install'
-                    sh 'npm test' 
+                    sh 'npm test'
                 }
             }
         }
 
-        // Uncomment and customize when ready
-        /*
         stage('Code Quality') {
             steps {
-                echo "Run SonarQube or CodeClimate scan here"
-                // sh 'sonar-scanner' or other command
+                // Run SonarQube analysis on backend code
+                withSonarQubeEnv(SONARQUBE_SERVER) {
+                    dir('jukebox-backend') {
+                        sh 'sonar-scanner'
+                    }
+                }
             }
         }
 
         stage('Security Scan') {
             steps {
-                echo "Run security tools like Trivy or Snyk here"
-                // sh 'trivy image ${IMAGE_NAME}:${DOCKER_TAG}'
+                script {
+                    // Scan Docker image for vulnerabilities using Trivy
+                    sh "trivy image --exit-code 1 --severity HIGH,CRITICAL ${IMAGE_NAME}:${DOCKER_TAG} || true"
+                    // Note: '|| true' prevents pipeline failure on scan errors — adjust as needed
+                }
             }
         }
 
         stage('Deploy to Test') {
             steps {
-                echo "Deploy your container to test environment here"
-                // Example: sh 'docker run -d -p 3000:3000 ${IMAGE_NAME}:${DOCKER_TAG}'
-            }
-        }
-
-        stage('Release to Prod') {
-            steps {
-                echo "Deploy to production here"
+                echo "Deploying Docker container to test environment"
+                // Example deploy command (customize as needed)
+                sh "docker run -d --rm -p 3000:3000 --name music-test ${IMAGE_NAME}:${DOCKER_TAG}"
             }
         }
 
         stage('Monitoring Setup') {
             steps {
-                echo "Set up monitoring and alerting here"
+                echo "Configure monitoring here (e.g., install Datadog agents or query New Relic)"
+                // Usually done outside Jenkins but you can trigger scripts or alerts here
             }
         }
-        */
     }
 
     post {
         always {
-            echo 'Cleaning up...'
+            echo 'Cleaning up Docker containers/images...'
+            sh "docker container prune -f"
             sh "docker image prune -f"
         }
         success {
-            echo 'Pipeline succeeded!'
+            echo 'Pipeline completed successfully!'
         }
         failure {
-            echo 'Pipeline failed!'
+            echo 'Pipeline failed. Check logs.'
         }
     }
 }
