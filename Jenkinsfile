@@ -4,7 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME = "music-backend"
         DOCKER_TAG = "latest"
-        SONARQUBE_SERVER = 'SonarQube'   // Jenkins SonarQube server name, configure in Jenkins
+        SONARQUBE_SERVER = 'SonarQube'
     }
 
     stages {
@@ -16,27 +16,24 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    sh "docker build -t ${IMAGE_NAME}:${DOCKER_TAG} ."
-                }
+                bat "docker build -t ${IMAGE_NAME}:${DOCKER_TAG} ."
             }
         }
 
         stage('Run Tests') {
             steps {
                 dir('jukebox-backend') {
-                    sh 'npm install'
-                    sh 'npm test'
+                    bat 'npm install'
+                    bat 'npm test'
                 }
             }
         }
 
         stage('Code Quality') {
             steps {
-                // Run SonarQube analysis on backend code
                 withSonarQubeEnv(SONARQUBE_SERVER) {
                     dir('jukebox-backend') {
-                        sh 'sonar-scanner'
+                        bat 'sonar-scanner'
                     }
                 }
             }
@@ -44,23 +41,18 @@ pipeline {
 
         stage('Security Scan') {
             steps {
-                script {
-                    // Scan Docker image for vulnerabilities using Trivy
-                    sh "trivy image --exit-code 1 --severity HIGH,CRITICAL ${IMAGE_NAME}:${DOCKER_TAG} || true"
-                    // Note: '|| true' prevents pipeline failure on scan errors — adjust as needed
-                }
+                bat "trivy image --exit-code 1 --severity HIGH,CRITICAL ${IMAGE_NAME}:${DOCKER_TAG} || exit 0"
             }
         }
 
         stage('Deploy to Test') {
             steps {
                 echo "Deploying Docker container to test environment"
-                // Example deploy command (customize as needed)
-                sh "docker run -d --rm -p 3000:3000 --name music-test ${IMAGE_NAME}:${DOCKER_TAG}"
+                bat "docker run -d --rm -p 3000:3000 --name music-test ${IMAGE_NAME}:${DOCKER_TAG}"
             }
         }
 
-         stage('Monitoring & Alerting') {
+        stage('Monitoring & Alerting') {
             environment {
                 DD_API_KEY = credentials('DD_API_KEY')
                 DD_APP_KEY = credentials('DD_APP_KEY')
@@ -68,11 +60,10 @@ pipeline {
             steps {
                 script {
                     echo 'Querying Datadog for monitor status...'
-
-                    def response = sh (
+                    def response = bat (
                         script: """
-                            curl -s -H "DD-API-KEY: ${DD_API_KEY}" \\
-                                 -H "DD-APPLICATION-KEY: ${DD_APP_KEY}" \\
+                            curl -s -H "DD-API-KEY: ${DD_API_KEY}" ^
+                                 -H "DD-APPLICATION-KEY: ${DD_APP_KEY}" ^
                                  "https://api.datadoghq.com/api/v1/monitor" | jq '. | length'
                         """,
                         returnStdout: true
@@ -88,8 +79,8 @@ pipeline {
     post {
         always {
             echo 'Cleaning up Docker containers/images...'
-            sh "docker container prune -f"
-            sh "docker image prune -f"
+            bat "docker container prune -f"
+            bat "docker image prune -f"
         }
         success {
             echo 'Pipeline completed successfully!'
