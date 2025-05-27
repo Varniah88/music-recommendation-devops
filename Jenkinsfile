@@ -75,19 +75,20 @@ pipeline {
                 DD_APP_KEY = credentials('DD_APP_KEY')
             }
             steps {
-                script {
+               script {
                     echo 'Querying Datadog for monitor status...'
                     def response = bat (
-                        script: '''
+                        script: """
                             curl -s -H "DD-API-KEY: ${DD_API_KEY}" ^
-                                 -H "DD-APPLICATION-KEY: ${DD_APP_KEY}" ^
-                                 "https://api.datadoghq.com/api/v1/monitor" | .\\jq.exe '. | length'
-                        ''',
+                                -H "DD-APPLICATION-KEY: ${DD_APP_KEY}" ^
+                                "https://api.datadoghq.com/api/v1/monitor" | .\\jq.exe ". | length"
+                        """,
                         returnStdout: true
                     ).trim()
 
                     echo "Number of monitors configured in Datadog: ${response}"
                 }
+
             }
         }
 
