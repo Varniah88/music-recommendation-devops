@@ -1,0 +1,6 @@
+projectKey=jukeboxbackend
+serverUrl=http://localhost:9000
+serverVersion=25.5.0.107428
+dashboardUrl=http://localhost:9000/dashboard?id=jukeboxbackend
+ceTaskId=2597f947-e864-4885-b57c-9ccab2732c02
+ceTaskUrl=http://localhost:9000/api/ce/task?id=2597f947-e864-4885-b57c-9ccab2732c02

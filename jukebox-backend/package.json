@@ -8,6 +8,7 @@
     "start": "npx pm2  start server.js -i 2",
     "dev": "nodemon server.js",
     "test": "mocha",
+    "coverage": "nyc --reporter=lcov --reporter=text-summary npm test",
     "stop": "npx pm2 kill"
   },
   "keywords": [],
@@ -36,9 +37,10 @@
     "spotify-web-api-node": "^5.0.2"
   },
   "devDependencies": {
-    "mocha": "^11.5.0",
     "cypress": "^14.4.0",
+    "mocha": "^11.5.0",
     "nodemon": "^3.1.10",
+    "nyc": "^17.1.0",
     "sinon": "^7.5.0",
     "sinon-mongoose": "^2.3.0"
   }

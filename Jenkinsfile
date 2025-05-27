@@ -60,12 +60,29 @@ pipeline {
             }
         }
 
-        stage('Monitoring Setup') {
+         stage('Monitoring & Alerting') {
+            environment {
+                DD_API_KEY = credentials('DD_API_KEY')
+                DD_APP_KEY = credentials('DD_APP_KEY')
+            }
             steps {
-                echo "Configure monitoring here (e.g., install Datadog agents or query New Relic)"
-                // Usually done outside Jenkins but you can trigger scripts or alerts here
+                script {
+                    echo 'Querying Datadog for monitor status...'
+
+                    def response = sh (
+                        script: """
+                            curl -s -H "DD-API-KEY: ${DD_API_KEY}" \\
+                                 -H "DD-APPLICATION-KEY: ${DD_APP_KEY}" \\
+                                 "https://api.datadoghq.com/api/v1/monitor" | jq '. | length'
+                        """,
+                        returnStdout: true
+                    ).trim()
+
+                    echo "Number of monitors configured in Datadog: ${response}"
+                }
             }
         }
+
     }
 
     post {
