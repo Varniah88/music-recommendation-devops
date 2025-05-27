@@ -43,11 +43,15 @@ pipeline {
         }
 
 
-        stage('Security Scan') {
-            steps {
-                bat "trivy image --exit-code 1 --severity HIGH,CRITICAL ${IMAGE_NAME}:${DOCKER_TAG} || exit 0"
-            }
-        }
+      stage('Security Scan') {
+    steps {
+        bat """
+        docker run --rm ^
+            -v //var/run/docker.sock:/var/run/docker.sock ^
+            aquasec/trivy:latest image --exit-code 1 --severity HIGH,CRITICAL ${IMAGE_NAME}:${DOCKER_TAG} || exit 0
+        """
+    }
+}
 
         stage('Deploy to Test') {
             steps {
