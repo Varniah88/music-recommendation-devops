@@ -32,12 +32,16 @@ pipeline {
         stage('Code Quality') {
             steps {
                 withSonarQubeEnv(SONARQUBE_SERVER) {
-                    dir('jukebox-backend') {
-                        bat 'sonar-scanner'
+                    script {
+                        def scannerHome = tool 'SonarQube'
+                        dir('jukebox-backend') {
+                            bat "${scannerHome}\\bin\\sonar-scanner.bat"
+                        }
                     }
                 }
             }
         }
+
 
         stage('Security Scan') {
             steps {
