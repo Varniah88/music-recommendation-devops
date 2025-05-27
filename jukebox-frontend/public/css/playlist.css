@@ -1,0 +1,398 @@
+/* Ensure the body takes full height */
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-size: cover; /* Ensures the image covers the whole screen */
+    background-position: center; /* Centers the background image */
+    background-attachment: fixed;           
+    background: linear-gradient(165deg, var(--THEME-BLUE, #1A0648) 29.89%, #831B58 103.18%, var(--THEME-PINK, #ED2F67) 110.49%);
+}
+
+main {
+    flex: 1 0 auto;
+}
+/* Sticky footer at the bottom */
+footer {
+    margin-top: auto;
+  }
+
+footer .icons a {
+    margin: 0 5px;
+  }
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+/* Apply margin-left to the logo */
+.brand-logo {
+    margin-left: 100px; /* Adjust the value as needed */
+    position: relative;
+}
+
+.nav-big a {
+    font-size: 15px; /* or smaller if needed */
+    padding: 20 10px;
+    margin-top: 15px;
+
+}
+.nav-small a {
+    font-size: 10px; /* or smaller if needed */
+    padding: 20 10px;
+}
+
+.sidenav a {
+    font-size: 16px;
+    color: black !important;
+  }
+  
+  /* Adjust logo on smaller screens */
+  @media only screen and (max-width: 600px) {
+    .brand-logo {
+      margin-left: 0;
+    }
+  }
+  
+  @media only screen and (max-width: 1200px) {
+  .nav-big {
+    display: none !important;
+  }
+
+  .sidenav-trigger {
+    display: block !important;
+  }
+
+  .brand-logo {
+    margin-left: 10px;
+  }
+
+  .chat-icon {
+    right: 20px;
+    bottom: 20px;
+  }
+}
+
+/* Import elegant serif font */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap');
+
+/* Collection container styling */
+.collection-item {
+    margin-bottom: 30px;
+}
+
+/* Small image, rounded corners */
+  .collection-card .card-image img {
+    border-radius: 15px;
+    height: 140px;  /* Smaller image height */
+    width: 100%;
+    object-fit: cover; /* Crops nicely */
+  }
+
+/* Title under image */
+.collection-title {
+    color: white;
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    margin: 5px 0;
+}
+
+/* Explore button: pill shape, solid pink */
+.explore-btn {
+    border-radius: 50px;
+    background-color: #ED2F67 !important;
+    color: white !important;
+    text-transform: none;
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    padding: 5px 20px;
+    box-shadow: none;
+}
+
+/* Ensure full card is transparent (no white) */
+.collection-item {
+    background: transparent;
+}
+
+/* Responsive: shrink image on small screens */
+@media only screen and (max-width: 600px) {
+    .collection-img {
+        width: 80px;
+        height: 80px;
+    }
+
+    .collection-title {
+        font-size: 13px;
+    }
+
+    .explore-btn {
+        font-size: 12px;
+        padding: 4px 15px;
+    }
+}
+
+  
+
+/* Responsive adjustments */
+@media only screen and (max-width: 992px) {
+    .collection-card .card-image img {
+        height: 150px;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    .collection-card .card-image img {
+        height: 120px;
+    }
+}
+
+ /* ===== Carousel Section Styles ===== */
+ .recommended-section {
+  padding: 40px 0;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+/* common carousel container */
+.carousel-trending,
+.carousel-artists {
+  display: flex;
+  overflow-x: auto;
+  gap: 20px;
+  padding-bottom: 10px;
+  scroll-behavior: smooth;
+}
+
+/* hide native scrollbar */
+.carousel-trending::-webkit-scrollbar,
+.carousel-artists::-webkit-scrollbar {
+  display: none;
+}
+
+/* each card wrapper */
+.carousel-item {
+  flex: 0 0 auto;
+  width: 140px;
+}
+
+/* song & artist cards */
+.card-song,
+.card-artist {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  overflow: hidden;
+  text-align: center;
+}
+
+/* images */
+.card-song img,
+.card-artist img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+}
+
+/* card text */
+.card-content {
+  padding: 8px 5px;
+}
+
+.song-title,
+.artist-name {
+  margin: 4px 0 2px;
+  font-size: 1rem;
+  color: #ffffff;
+}
+
+.song-artist,
+.artist-label {
+  font-size: 0.8rem;
+  color: #dddddd;
+}
+.explore-button {
+  margin-top: 10px;
+  padding: 6px 12px;
+  background-color: #ED2F67;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.explore-button:hover {
+  background-color: #820329;
+}
+/* Base modal wrapper (hidden by default) */
+.playlist-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+
+.playlist-modal.active {
+  display: flex;
+}
+
+.modal-overlay {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 1;
+}
+
+.modal-content {
+  position: relative;
+  z-index: 2;
+  background: #ffffff;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 600px;
+  max-height: calc(100vh - 160px);
+  overflow-y: auto;
+  padding: 2rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+.playlist-actions {
+  display: flex;
+  justify-content: center; /*Center the buttons horizontally */
+  gap: 1rem; /* Space between buttons */
+  margin-top: 1.5rem;
+}
+
+.remove-button {
+  background-color: transparent;
+  color: #e74c3c;
+  border: none;
+  cursor: pointer;
+  font-size: 10px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.remove-button:hover {
+  background-color: rgba(231, 76, 60, 0.1);
+  color: #c0392b;
+}
+.playlist-table td {
+  padding: 10px;
+  vertical-align: middle;
+}
+
+.add-btn,
+.export-btn,
+.delete-btn {
+  flex: 1;
+  padding: 0.75rem;
+  margin: 0 0.5rem;
+  border: none;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.export-btn {
+  background-color: #1db954; /* Spotify green */
+  color: white;
+}
+
+.export-btn:hover {
+  background-color: #17a347;
+}
+
+.delete-btn {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.delete-btn:hover {
+  background-color: #c0392b;
+}
+
+.add-btn {
+  background-color: #bf50b0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.add-btn:hover {
+  background-color: #ad4aa0;
+}
+
+.add-btn i.material-icons {
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #555;
+  transition: color 0.2s ease;
+  z-index: 3;
+}
+
+.modal-close-btn:hover {
+  color: #e74c3c;
+}
+/* Shared Wrapper Style */
+.modal-search-wrapper,
+.playlist-input-wrapper {
+  position: relative;
+  margin-bottom: 1.5rem;
+  width: 100%;
+}
+.modal-search-wrapper {
+  position: relative;
+  margin-bottom: 1.5rem;
+  width: 100%;
+}
+
+/* Shared Input Style */
+.modal-search-input,
+.playlist-input {
+  width: 100%;
+  padding: 0.75rem 2.5rem 0.75rem 1rem;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.modal-search-input:focus,
+.playlist-input:focus {
+  border-color: #1db954; /* Spotify green for focus */
+}
+
+/* Icon Style */
+.input-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+  pointer-events: none;
+  font-size: 20px;
+}

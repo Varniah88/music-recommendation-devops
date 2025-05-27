@@ -1,0 +1,394 @@
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background: linear-gradient(165deg, var(--THEME-BLUE, #1A0648) 29.89%, #831B58 103.18%, var(--THEME-PINK, #ED2F67) 110.49%);
+}
+
+.welcome-section {
+  padding: 3rem 2rem 2rem 2rem;
+}
+
+.available-playlists {
+  padding: 2rem 1rem;
+}
+
+.card h6 {
+  margin: 0;
+}
+
+footer {
+  margin-top: auto;
+}
+
+footer .icons a {
+  margin: 0 5px;
+}
+
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.brand-logo {
+  margin-left: 100px;
+  position: relative;
+}
+
+.nav-big a {
+  font-size: 15px;
+  /* padding: 20px 10px;  */
+  /* margin-top: 15px; */
+}
+
+.nav-small a {
+  font-size: 10px;
+  padding: 20px 10px; /* Added units */
+}
+
+.sidenav a {
+  font-size: 16px;
+  color: black !important;
+}
+
+@media only screen and (max-width: 600px) {
+  .brand-logo {
+    margin-left: 0;
+  }
+}
+
+@media only screen and (max-width: 1200px) {
+  .nav-big {
+    display: none !important;
+  }
+
+  .sidenav-trigger {
+    display: block !important;
+  }
+
+  .brand-logo {
+    margin-left: 10px;
+  }
+
+  .chat-icon {
+    right: 20px;
+    bottom: 20px;
+  }
+}
+
+/* Transparent modal content with glass effect */
+
+.playlist-card-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+  min-height: 300px;
+}
+
+.playlist-image {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+
+#playlistSongsModal .modal-content {
+  background-color: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+  padding: 20px;
+  color: black !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  max-width: 700px;
+  margin: auto;
+
+  max-height: 70vh;       /* Limit modal height */
+  overflow-y: auto;       /* Enable vertical scroll */
+
+  scrollbar-width: none;  /* Firefox: hide scrollbar */
+  -ms-overflow-style: none; /* IE and Edge: hide scrollbar */
+}
+
+/* Hide scrollbar for Chrome, Safari and Edge */
+#playlistSongsModal .modal-content::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+  background: transparent;
+  display: none;
+}
+
+/* Table styling inside modal */
+#playlistSongsModal table,
+#playlistSongsModal table th,
+#playlistSongsModal table td {
+  color: black !important;
+}
+
+/* Table row base and hover */
+#playlistSongsModal table tbody tr {
+  background-color: #f9f9f9;
+  transition: background-color 0.3s ease;
+}
+
+#playlistSongsModal table tbody tr:hover {
+  background-color: #ffe4ec; /* soft pink on hover */
+  cursor: pointer;
+}
+
+/* Styled table for clarity */
+#playlistSongsModal table.highlight {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#playlistSongsModal th,
+#playlistSongsModal td {
+  padding: 12px 8px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Round images */
+#songsTableBody img {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* Container for search + add */
+#playlistSongsModal > .modal-content > div {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 20px;
+  max-width: 600px; /* max width of search+add */
+  width: 100%;
+}
+
+/* Search input container */
+#playlistSongsModal > .modal-content > div > div {
+  position: relative;
+  flex-grow: 1;       /* fill available space */
+  min-width: 0;       /* allow shrinking */
+}
+
+/* Modern search input - full width inside container */
+#searchInput {
+  width: 100%;        /* fill parent container */
+  padding: 10px 14px;
+  font-size: 15px;
+  border: 1.5px solid #ccc;
+  border-radius: 12px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  outline: none;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  height: 38px;
+  box-sizing: border-box;
+  background: #fff;
+}
+
+#searchInput:focus {
+  border-color: #4a90e2;
+  box-shadow: 0 0 8px #4a90e2aa;
+}
+
+/* Suggestions dropdown */
+#suggestions {
+  width: 100%;        /* match search input width */
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  background: white;
+  border: 1px solid #ccc;
+  display: none;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 999;
+  top: 100%;
+  left: 0;
+  box-sizing: border-box;
+  border-radius: 0 0 12px 12px;
+}
+
+/* Suggestion items */
+#suggestions li {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+#suggestions li:hover {
+  background-color: #f0f0f0;
+}
+
+/* Add button next to input */
+#addSongButton {
+  padding: 10px 22px;
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgb(37 117 252 / 0.4);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  height: 38px; /* same height as search input */
+  flex-shrink: 0; /* prevent shrinking */
+}
+
+#addSongButton:hover {
+  background: linear-gradient(135deg, #2575fc 0%, #6a11cb 100%);
+  box-shadow: 0 6px 18px rgb(106 17 203 / 0.6);
+}
+
+#addSongButton:active {
+  background: #1a4ed8;
+  box-shadow: none;
+}
+
+/* Center the modal heading */
+#modalPlaylistName {
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight: 700;
+  font-size: 24px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Modal container */
+#createPlaylistModal {
+  max-width: 400px;
+  margin: auto;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  background: #fff;
+  padding: 2.5rem 2rem 2rem 2rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  box-sizing: border-box;
+  min-height: 280px;
+  color: #333;
+}
+
+/* Modal title */
+#createPlaylistModal h4 {
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  font-size: 1.8rem;
+  color: #e91e63; /* pink */
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+
+/* Input field wrapper */
+#createPlaylistModal .input-field {
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+/* Input text */
+#createPlaylistModal input[type="text"] {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 1.5px solid #ccc;
+  border-radius: 10px;
+  outline: none;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  box-sizing: border-box;
+  color: #444;
+  background: white;
+}
+
+/* Input label */
+#createPlaylistModal label {
+  position: absolute;
+  top: 0.75rem;
+  left: 1rem;
+  font-size: 1rem;
+  color: #999;
+  pointer-events: none;
+  transition: all 0.2s ease;
+  background: white;
+  padding: 0 0.25rem;
+}
+
+/* Move label up and pink when input focused or filled */
+#createPlaylistModal input[type="text"]:focus + label,
+#createPlaylistModal input[type="text"]:not(:placeholder-shown) + label {
+  top: -0.8rem;
+  left: 0.8rem;
+  font-size: 0.75rem;
+  color: #e91e63;
+  font-weight: 600;
+}
+
+/* Input focus border and shadow */
+#createPlaylistModal input[type="text"]:focus {
+  border-color: #e91e63;
+  box-shadow: 0 0 8px rgba(233, 30, 99, 0.3);
+}
+
+/* Pink submit button */
+#createPlaylistModal button.btn.waves-effect.waves-light {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #e91e63; /* pink */
+  color: white;
+  padding: 0.75rem 2.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 10px;
+  border: none;
+  box-shadow: 0 4px 12px rgba(233, 30, 99, 0.4);
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  user-select: none;
+  line-height: 1;
+}
+
+
+
+/* Button hover */
+#createPlaylistModal button.btn.waves-effect.waves-light:hover {
+  background-color: #d81b60;
+  box-shadow: 0 6px 18px rgba(216, 27, 96, 0.6);
+}
+
+/* Button active */
+#createPlaylistModal button.btn.waves-effect.waves-light:active {
+  background-color: #ad1457;
+  box-shadow: none;
+}
+
+/* Responsive modal width */
+@media (max-width: 480px) {
+  #createPlaylistModal {
+    width: 90%;
+  }
+}
+
+#toast-container {
+  top: 20%; /* or 50% for vertical center */
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Make individual toasts larger and center the text */
+.toast {
+  font-size: 1.3rem;
+  text-align: center;
+  min-width: 250px;
+}

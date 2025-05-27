@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Register</title>
+
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+
+  <img src="/images/logofinal.png" alt="Logo" class="logo-top">
+
+  <div class="center-wrapper">
+
+   
+    <div class="login-container">
+      <h2>Register</h2>
+
+      <!-- Registration form -->
+      <form id="registerForm">
+        
+        <label for="regName">Name:</label><br>
+        <input type="text" id="regName" required><br><br>
+
+       
+        <label for="regEmail">Email:</label><br>
+        <input type="email" id="regEmail" required><br><br>
+
+       
+        <label for="regPassword">Password:</label><br>
+        <input type="password" id="regPassword" required><br><br>
+
+        <label for="regDOB">Date of Birth:</label><br>
+        <input type="date" id="regDOB" required><br><br>
+
+        <label for="regAge">Age:</label><br>
+        <input type="text" id="regAge" required><br><br>
+
+        <label for="regGender">Gender:</label><br>
+        <select id="regGender" required>
+          <option value="">Select Gender</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Non-binary">Non-binary</option>
+          <option value="Other">Other</option>
+        </select><br><br>
+
+        <label for="regBio">Create your Bio:</label><br>
+        <textarea id="regBio" rows="3" placeholder="Tell us about yourself..."></textarea><br><br>
+
+        
+        <button type="submit">Register</button>
+      </form>
+
+      <!-- Message box for feedback (e.g. success or validation errors) -->
+      <p id="regMessage"></p>
+
+      
+      <p class="register-link">
+        Already have an account?
+        <a href="login">Login here</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- Footer section -->
+  <footer class="footer">
+    <p>© 2025 Juke Box Music Studio. All rights reserved.</p>
+  </footer>
+
+  <script type="module">
+    import { handleRegister } from '/controllers/registerController.js';
+    document.getElementById('registerForm').addEventListener('submit', handleRegister);
+  </script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+body {
+    font-family: sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+nav {
+    margin-bottom: 20px;
+}
+
+.container {
+    margin-top: 20px;
+}
+
+h2 {
+    color: #212121;
+    margin-bottom: 20px;
+}
+
+table th {
+    background-color: #eee;
+    font-weight: bold;
+}
+
+table td, table th {
+    padding: 10px;
+    text-align: left;
+}
+
+.btn i {
+    margin-right: 5px;
+}
+
+.btn-small {
+    padding: 0 10px;
+    line-height: 28px;
+    height: 28px;
+}
+
+.btn-small i {
+    font-size: 1rem;
+}
+
+.modal {
+    padding: 20px;
+}
+
+.modal-content h4 {
+    margin-top: 0;
+}
+
+.modal-footer {
+    padding: 15px;
+    text-align: right;
+}

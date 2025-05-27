@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Live Playlist</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/liveRoom.css" />
+     <script src="/js/authGuard.js"></script>
+     <script src="/js/logout.js"></script>
+</head>
+
+<body>
+  <!-- Navbar -->
+  <nav class="black">
+    <div class="nav-wrapper container">
+      <a href="#" class="brand-logo left">
+        <img src="/images/logofinal.png" alt="JukeBox Logo" style="height: 60px;">
+      </a>
+      <a href="#" data-target="mobile-menu" class="sidenav-trigger right">
+        <i class="material-icons white-text">menu</i>
+      </a>
+      <ul id="nav-mobile" class="right hide-on-large-and-down nav-big">
+        <li><a href="./home">HOME</a></li>
+        <li><a href="./songrecommendation">SONG RECOMMENDATION</a></li>
+        <li><a href="/playlist">PLAYLIST</a></li>
+        <li><a href="./about">ABOUT</a></li>
+       <li><a href="#" id="logoutBtn">LOGOUT</a></li>
+        <li>
+          <a href="./profile" class="user left">
+            <img src="/images/user.jpeg" alt="User" style="height: 50px; border-radius: 50%;">
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <ul class="sidenav" id="mobile-menu">
+    <li><a href="./home">HOME</a></li>
+    <li><a href="./songrecommendation">SONG RECOMMENDATION</a></li>
+    <li><a href="./playlist">PLAYLIST</a></li>
+    <li><a href="./about">ABOUT</a></li>
+     <li><a href="#" id="logoutBtn">LOGOUT</a></li>
+    <li>
+      <a href="./profile">
+        <img src="/images/user.jpeg" alt="User" style="height: 40px; border-radius: 50%;">
+      </a>
+    </li>
+  </ul>
+
+  <!-- Welcome -->
+  <div class="section center-align white-text welcome-section">
+    <h4>🎵 Welcome, <span id="username">Guest</span>!</h4>
+    <p class="flow-text">You're now part of the Live Playlist experience.</p>
+  </div>
+
+  <!-- Playlist Cards -->
+  <div class="section available-playlists">
+    <h5 class="white-text center-align">Available Playlists Rooms</h5>
+    <div class="container">
+      <div class="row" id="playlistList"></div>
+    </div>
+  </div>
+
+
+  <!-- Create Playlist Modal -->
+  <div class="center-align" style="margin: 20px;">
+    <a class="btn pink modal-trigger" href="#createPlaylistModal">
+      <i class="material-icons left">add</i>Create Playlist
+    </a>
+  </div>
+  <div id="createPlaylistModal" class="modal">
+    <div class="modal-content">
+      <h4>Create New Playlist</h4><br>
+      <form id="createPlaylistForm">
+       <div class="input-field">
+    <input id="playlistNameInput" type="text" placeholder=" " required />
+    <label for="playlistNameInput">Playlist Name</label>
+  </div>
+
+  <!-- New file input for image -->
+  <div class="file-field input-field">
+    <div class="btn pink">
+      <span>Upload Image</span>
+      <input id="playlistImageInput" type="file" accept="image/png, image/jpeg" required />
+    </div>
+    <div class="file-path-wrapper">
+      <input class="file-path validate" type="text" placeholder="Choose playlist cover image" />
+    </div>
+  </div>
+
+  <button class="btn waves-effect waves-light" type="submit">Create</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add Song Modal -->
+  <div id="addSongModal" class="modal">
+    <div class="modal-content">
+      <h4>Add Song to Playlist</h4>
+      <div class="input-field">
+        <input type="text" id="songSearchInput" placeholder="Search for a song..." />
+      </div>
+      <ul id="songSuggestions" class="collection"></ul>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+    </div>
+  </div>
+
+
+  <!-- Playlist Songs Modal -->
+  <div id="playlistSongsModal" class="modal">
+    <div class="modal-content" style="color: black;">
+      <h4 id="modalPlaylistName" style="text-align: center; margin-bottom: 20px;"></h4>
+      <button id="userJoinNotification" style="display:none; color: lime; padding: 10px;"> </button>
+
+      <!-- Search bar and Add button -->
+      <div style="margin-bottom: 15px; display: flex; gap: 10px; align-items: center;">
+        <div style="position: relative; width: 300px;">
+          <input type="text" id="searchInput" placeholder="Search songs..." autocomplete="off" />
+          <ul id="suggestions"
+            style="list-style: none; margin: 0; padding: 0; position: absolute; width: 100%; background: white; border: 1px solid #ccc; display: none;">
+          </ul>
+        </div>
+        <button id="addSongButton" style="padding: 8px 16px; font-size: 16px; cursor: pointer;">
+          Add
+        </button>
+      </div>
+
+      <!-- Songs Table -->
+      <table class="highlight">
+        <thead>
+          <tr>
+            <th>Image</th>
+            <th>Song Title</th>
+            <th>Added By</th>
+          </tr>
+        </thead>
+        <tbody id="songsTableBody"></tbody>
+      </table>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-save btn green">Save</a>
+      <a href="#!" class="modal-close btn pink">Close</a>
+    </div>
+  </div>
+
+
+  <!-- Footer -->
+  <footer class="page-footer black">
+    <div class="container">
+      <div class="row">
+        <div class="col l6 s12">
+          <p class="grey-text text-lighten-4">© 2025 Juke-Box</p>
+        </div>
+        <div class="col l6 s12 right-align icons">
+          <a href="#" class="btn black"><img src="/images/Facebook.png" height="30px" alt="Facebook"></a>
+          <a href="#" class="btn black"><img src="/images/Twitter.png" height="30px" alt="Twitter"></a>
+          <a href="#" class="btn black"><img src="/images/Instagram.png" height="30px" alt="Instagram"></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
+  <script src="/js/sidenave.js"></script>
+  <script src="/js/playlistLiveRoom.js"></script>
+
+
+</body>
+
+</html>

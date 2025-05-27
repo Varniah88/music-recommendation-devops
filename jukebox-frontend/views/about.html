@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/js/authGuard.js"></script>
+    <script src="/js/logout.js"></script>
+    <title>Juke Box</title>
+    <!-- Link to external CSS -->
+    <link href="/css/home.css" rel="stylesheet">
+    <!-- Materialize CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+</head>
+<body>
+    <!-- Navbar -->
+    <!-- Navbar -->
+<nav class="black">
+    <div class="nav-wrapper container">
+      <a href="#" class="brand-logo left">
+        <img src="/images/logofinal.png" alt="JukeBox Logo" style="height: 60px;">
+      </a>
+      <!-- Hamburger icon for mobile -->
+      <a href="#" data-target="mobile-menu" class="sidenav-trigger right">
+        <i class="material-icons white-text">menu</i>
+      </a>
+  
+      <!-- Desktop menu -->
+      <ul id="nav-mobile" class="right hide-on-large-and-down nav-big">
+        <li><a href="./home">HOME</a></li>
+        <li><a href="./songrecommendation">SONG RECOMMENDATION</a></li>
+        <li><a href="./playlist">PLAYLIST</a></li>
+        <li><a href="./about">ABOUT</a></li>
+        <li><a href="#" id="logoutBtn">LOGOUT</a></li>
+        <li id="adminTab" style="display: none;"><a href="./admin">Admin</a></li>
+        <li>
+          <a href="./profile" class="user left">
+            <img src="/images/user.jpeg" alt="User" style="height: 50px; border-radius: 50%;">
+          </a>
+        </li>
+      </ul>      
+    </div>
+  </nav>
+  
+  <!-- Mobile Menu -->
+  <ul class="sidenav" id="mobile-menu">
+    <li><a href="#">HOME</a></li>
+    <li><a href="./songrecommendation">SONG RECOMMENDATION</a></li>
+    <li><a href="./playlist">PLAYLIST</a></li>
+    <li><a href="./about">ABOUT</a></li>
+    <li><a href="#" id="logoutBtn">LOGOUT</a></li>
+    <li id="adminTab" style="display: none;"><a href="./admin">Admin</a></li>
+    <li>
+      <a href="./profile">
+        <img src="/images/user.jpeg" alt="User" style="height: 40px; border-radius: 50%;">
+      </a>
+    </li>
+  </ul>
+  
+ <!-- About Us Section -->
+<!-- About Us Section -->
+<div class="container about-us-section">
+    <h2 class="center-align about-title white-text">About Us</h2>
+    <p class="center-align about-text white-text">
+
+Welcome to JukeBox — where your music taste finally gets the spotlight it deserves.
+We’re not just another playlist builder. We’re your go-to vibe curator, your late-night song matchmaker, and your digital stage to show off what you’re listening to. Drop in a few tracks you love, and we’ll hit you back with recommendations that slap. No algorithms pretending to know you — just real, smart suggestions.
+<br><br>
+Link up your Spotify, build playlists, flex your taste, and chat with other music heads who actually get it. Whether you're deep into indie bangers or guilty pleasure pop, there’s a place for you here.
+<br><br>
+No fluff. Just beats, bops, and bangers. This is JukeBox. Let’s make some noise.
+    </p>
+    
+</div>
+
+
+    <!-- Footer -->
+    <footer class="page-footer black">
+        <div class="container">
+            <div class="row">
+                <div class="col l6 s12">
+                    <p class="grey-text text-lighten-4">© 2025 Juke-Box</p>
+                </div>
+                <div class="col l6 s12 right-align icons">
+                    <a href="#" class="btn black"><img src="/images/Facebook.png" height="30px" alt="Facebook"></a>
+                    <a href="#" class="btn black"><img src="/images/Twitter.png" height="30px" alt="Twitter"></a>
+                    <a href="#" class="btn black"><img src="/images/Instagram.png" height="30px" alt="Instagram"></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Materialize & jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="/js/home.js"></script>
+    <script src="/js/sidenave.js"></script>
+    <!-- Carousel Rendering Script -->
+</body>
+</html>

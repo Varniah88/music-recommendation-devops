@@ -1,0 +1,225 @@
+/* Ensure the body takes full height */
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-size: cover; /* Ensures the image covers the whole screen */
+    background-position: center; /* Centers the background image */
+    background-attachment: fixed;           
+    background: linear-gradient(165deg, var(--THEME-BLUE, #1A0648) 29.89%, #831B58 103.18%, var(--THEME-PINK, #ED2F67) 110.49%);
+}
+
+main {
+    flex: 1 0 auto;
+}
+/* Sticky footer at the bottom */
+footer {
+    margin-top: auto;
+  }
+
+footer .icons a {
+    margin: 0 5px;
+  }
+
+/* Make navbar sticky */
+nav {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+/* Apply margin-left to the logo */
+.brand-logo {
+    margin-left: 100px; /* Adjust the value as needed */
+    position: relative;
+}
+.hide-on-med-and-down{
+    margin-right: 100px;
+
+}
+.icons{
+    position: relative;
+}
+
+.start{
+justify-content: center;
+align-items: center;
+margin-left: 210px;
+}
+.user{
+    margin-top: 6px;
+}
+.chat-icon {
+    position: fixed;
+    bottom: 80px;
+    right: 100px;
+    z-index: 999;
+}
+.nav-big a {
+    font-size: 15px; /* or smaller if needed */
+    padding: 20 10px;
+    margin-top: 15px;
+
+}
+.nav-small a {
+    font-size: 10px; /* or smaller if needed */
+    padding: 20 10px;
+}
+.hide-on-med-and-downn{
+    margin-right: 175px;
+}
+.custom-text {
+    font-size: 16px !important;
+    line-height: 1.4;
+    margin-bottom: 20px;
+  }
+  
+  .custom-btn {
+    font-size: 10px !important;
+    padding: 8px 16px !important;
+    height: auto !important;
+    line-height: normal !important;
+  }
+
+  
+  /* ===== Carousel Section Styles ===== */
+.recommended-section {
+    padding: 40px 0;
+  }
+  
+  .section-title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  /* common carousel container */
+  .carousel-trending,
+  .carousel-artists {
+    display: flex;
+    overflow-x: auto;
+    gap: 20px;
+    padding-bottom: 10px;
+    scroll-behavior: smooth;
+  }
+  
+  /* hide native scrollbar */
+  .carousel-trending::-webkit-scrollbar,
+  .carousel-artists::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* each card wrapper */
+  .carousel-item {
+    flex: 0 0 auto;
+    width: 140px;
+  }
+  
+  /* song & artist cards */
+  .card-song,
+  .card-artist {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    overflow: hidden;
+    text-align: center;
+  }
+  
+  /* images */
+  .card-song img,
+  .card-artist img {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+  }
+  
+  /* card text */
+  .card-content {
+    padding: 8px 5px;
+  }
+  
+  .song-title,
+  .artist-name {
+    margin: 4px 0 2px;
+    font-size: 1rem;
+    color: #ffffff;
+  }
+  
+  .song-artist,
+  .artist-label {
+    font-size: 0.8rem;
+    color: #dddddd;
+  }
+  
+  /* Mobile navbar tweaks */
+.sidenav a {
+    font-size: 16px;
+    color: black !important;
+  }
+  
+  /* Adjust logo on smaller screens */
+  @media only screen and (max-width: 600px) {
+    .brand-logo {
+      margin-left: 0;
+    }
+  }
+  
+  @media only screen and (max-width: 1200px) {
+  .nav-big {
+    display: none !important;
+  }
+
+  .sidenav-trigger {
+    display: block !important;
+  }
+
+  .brand-logo {
+    margin-left: 10px;
+  }
+
+  .chat-icon {
+    right: 20px;
+    bottom: 20px;
+  }
+}
+
+/* Improve spacing for footer */
+footer .row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
+footer .icons {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* Responsive tweaks */
+@media only screen and (max-width: 600px) {
+  footer .row {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  footer .col {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  footer .icons {
+    justify-content: center;
+  }
+}
+/* Ensure the row and column are using flex to center image */
+.row {
+  display: flex;
+  justify-content: center;  /* Center the content horizontally */
+  align-items: center;  /* Center the content vertically */
+}
+
+.col {
+  display: flex;
+  justify-content: center;  /* Center content horizontally in the column */
+  align-items: center;  /* Center content vertically in the column */
+}

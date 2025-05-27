@@ -1,0 +1,69 @@
+/* Base & Background */
+body {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: url('../images/bg.jpg') center/cover no-repeat fixed;
+  }
+  
+  /* Navbar tweaks */
+  nav .container {
+    display: flex;
+    align-items: center;
+  }
+  .logo {
+    height: 50px;
+  }
+  
+  /* Hero */
+  .hero {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 2rem;
+    color: #fff;
+  }
+  .welcome {
+    font-family: "RocknRoll One", sans-serif;
+    font-size: clamp(2.5rem, 8vw, 4.5rem);
+    margin: 0.5em 0;
+    line-height: 1.1;
+  }
+  .colored-letter {
+    color: #F42B62;
+  }
+  .sub {
+    font-family: "RocknRoll One", sans-serif;
+    font-size: clamp(1rem, 3vw, 1.5rem);
+    margin-bottom: 1.5em;
+  }
+  .start {
+    padding: 0 2rem;
+  }
+  
+  /* Footer */
+  .page-footer {
+    padding: 1rem 0;
+  }
+  .social-icon {
+    height: 30px;
+    margin-left: 0.5rem;
+  }
+  
+  /* Media Query for very small screens */
+  @media (max-width: 360px) {
+    .welcome {
+      font-size: 2rem;
+    }
+    .sub {
+      font-size: 1rem;
+    }
+    .start {
+      width: 100%;
+    }
+  }
+  

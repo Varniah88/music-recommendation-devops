@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Recommendation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f4f4f9;
+            margin: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"], select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            border-radius: 4px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .recommendations {
+            margin-top: 30px;
+        }
+        .recommendation-item {
+            background-color: #fafafa;
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+        .recommendation-item p {
+            margin: 0;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Music Recommendation</h1>
+
+    <form action="/" method="POST">
+        <div class="form-group">
+            <label for="model-select">Select Recommendation Model:</label>
+            <select id="model-select" name="model_type" required>
+                <option value="song">Song</option>
+                <option value="playlist">Playlist</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="song1">Song 1 (Enter Song Name):</label>
+            <input type="text" id="song1" name="song1" placeholder="Enter Song Name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="song2">Song 2 (Enter Song Name):</label>
+            <input type="text" id="song2" name="song2" placeholder="Enter Song Name">
+        </div>
+
+        <div class="form-group">
+            <label for="song3">Song 3 (Enter Song Name):</label>
+            <input type="text" id="song3" name="song3" placeholder="Enter Song Name">
+        </div>
+
+        <button type="submit">Get Recommendations</button>
+    </form>
+
+    {% if error %}
+        <div class="error">{{ error }}</div>
+    {% endif %}
+
+    {% if recommendations %}
+        <div class="recommendations">
+            <h2>Recommended Songs</h2>
+            {% for song in recommendations %}
+                <div class="recommendation-item">
+                    <p><strong>Track Name:</strong> {{ song['track_name'] }}</p>
+                    <p><strong>Artist:</strong> {{ song['artists'] }}</p>
+                    <p><strong>Genre:</strong> {{ song['track_genre'] }}</p>
+                    <p><strong>Weight:</strong> {{ song['weight'] }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+
+</body>
+</html>

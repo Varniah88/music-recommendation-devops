@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <img src="/images/logofinal.png" alt="Logo" class="logo-top">
+  <div class="center-wrapper">
+
+    <div class="login-container">
+      <h2>Login</h2>
+
+      <!-- Login form -->
+      <form id="loginForm">
+        <label>Email:</label><br>
+        <input type="email" id="email" required><br><br>
+
+        <label>Password:</label><br>
+        <input type="password" id="password" required><br><br>
+
+        <button type="submit">Login</button>
+      </form>
+
+      <p class="register-link">
+        Don't have an account?
+        <a href="register">Register here</a>
+      </p>
+
+      <!-- Message area for login feedback (success or error) -->
+      <p id="message"></p>
+    </div>
+  </div>
+
+  <script type="module">
+    import { handleLogin } from '/controllers/loginController.js';
+    document.getElementById('loginForm').addEventListener('submit', handleLogin);
+  </script>
+</body>
+
+<!-- Footer -->
+<footer class="footer">
+  <p>© 2025 Juke Box Music Studio. All rights reserved.</p>
+</footer>
+</html>

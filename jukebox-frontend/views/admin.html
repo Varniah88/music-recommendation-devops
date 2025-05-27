@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+</head>
+<script src="/js/authGuard.js"></script>
+ <script src="/js/logout.js"></script>
+<body>
+    <nav class="black">
+        <div class="nav-wrapper container">
+          <a href="#" class="brand-logo left">
+            <img src="/images/logofinal.png" alt="JukeBox Logo" style="height: 60px;">
+          </a>
+          <a href="#" data-target="mobile-menu" class="sidenav-trigger right">
+            <i class="material-icons white-text">menu</i>
+          </a>
+          <ul id="nav-mobile" class="right hide-on-large-and-down nav-big">
+            <li><a href="./home">HOME</a></li>
+            <li><a href="./songrecommendation">SONG RECOMMENDATION</a></li>
+            <li><a href="./playlist">PLAYLIST</a></li>
+            <li><a href="./about">ABOUT</a></li>
+            <li><a href="#" id="logoutBtn">LOGOUT</a></li>
+            <li><a href="./admin">ADMIN</a>
+                <a href="./profile">
+                  <img src="/images/user.jpeg" alt="User" style="height: 40px; border-radius: 50%;">
+                </a>
+              </li>
+          </ul>      
+        </div>
+      </nav>
+    <div class="container">
+        <h4>Admin Dashboard</h4>
+        <h2 class="center-align">User Management</h2>
+        <table class="striped highlight responsive-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Current Status</th>
+                    <th>Change Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="userTableBody">
+                <!-- Populated by admin.js -->
+            </tbody>
+        </table>
+    </div>
+
+
+    <div class="container">
+        <h2 class="center-align" data-test="song-management">Song Management</h2>
+
+        <div class="row">
+            <div class="col s12 m6">
+                <a href="#add-song-with-file" class="waves-effect waves-light btn modal-trigger"><i
+                        class="material-icons left">add</i>Add New Song With File</a>
+            </div>
+            <div class="col s12 m6">
+                <a href="#add-song-modal" class="waves-effect waves-light btn modal-trigger"><i
+                        class="material-icons left">add</i>Add New Song</a>
+            </div>
+        </div>
+
+        <table class="striped">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Artists</th>
+                    <th>Album Name</th>
+                    <th>Album ID</th>
+                    <th>Release Date</th>
+                    <th>Popularity</th>
+                    <th>Explicit</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="song-list">
+            </tbody>
+        </table>
+
+        <div id="add-song-modal" class="modal">
+            <div class="modal-content">
+                <h4>Add New Song</h4>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="add_name" type="text">
+                        <label for="add_name">Title</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#!" class="modal-close waves-effect waves-green btn-flat">Cancel</a>
+                <button class="waves-effect waves-green btn" data-test="add-song">Save</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="/js/admin.js"></script>
+    <script>
+        // After role check passes, initialize Materialize components
+        document.addEventListener('DOMContentLoaded', function () {
+          const carousels = document.querySelectorAll('.carousel');
+          if (carousels.length > 0) {
+            M.Carousel.init(carousels);
+          }
+      
+          const modals = document.querySelectorAll('.modal');
+          M.Modal.init(modals);
+        });
+      </script>
+      
+      
+</body>
+
+</html>
