@@ -42,21 +42,30 @@ pipeline {
             }
         }
 
-
-      stage('Security Scan') {
-    steps {
-        bat """
-        docker run --rm ^
-            -v //var/run/docker.sock:/var/run/docker.sock ^
-            aquasec/trivy:latest image --exit-code 1 --severity HIGH,CRITICAL ${IMAGE_NAME}:${DOCKER_TAG} || exit 0
-        """
-    }
-}
+        stage('Security Scan') {
+            steps {
+                bat """
+                docker run --rm ^
+                    -v //var/run/docker.sock:/var/run/docker.sock ^
+                    aquasec/trivy:latest image --exit-code 1 --severity HIGH,CRITICAL ${IMAGE_NAME}:${DOCKER_TAG} || exit 0
+                """
+            }
+        }
 
         stage('Deploy to Test') {
             steps {
                 echo "Deploying Docker container to test environment"
                 bat "docker run -d --rm -p 3000:3000 --name music-test ${IMAGE_NAME}:${DOCKER_TAG}"
+            }
+        }
+        
+        stage('Install jq') {
+            steps {
+                bat '''
+                if not exist jq.exe (
+                    powershell -Command "Invoke-WebRequest -Uri https://github.com/stedolan/jq/releases/download/jq-1.7/jq-win64.exe -OutFile jq.exe"
+                )
+                '''
             }
         }
 
@@ -69,11 +78,11 @@ pipeline {
                 script {
                     echo 'Querying Datadog for monitor status...'
                     def response = bat (
-                        script: """
+                        script: '''
                             curl -s -H "DD-API-KEY: ${DD_API_KEY}" ^
                                  -H "DD-APPLICATION-KEY: ${DD_APP_KEY}" ^
-                                 "https://api.datadoghq.com/api/v1/monitor" | jq '. | length'
-                        """,
+                                 "https://api.datadoghq.com/api/v1/monitor" | .\\jq.exe '. | length'
+                        ''',
                         returnStdout: true
                     ).trim()
 
