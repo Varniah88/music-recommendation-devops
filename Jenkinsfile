@@ -52,12 +52,44 @@ pipeline {
             }
         }
 
-        stage('Deploy to Test') {
-            steps {
-                echo "Deploying Docker container to test environment"
-                bat "docker run -d --rm -p 3000:3000 --name music-test ${IMAGE_NAME}:${DOCKER_TAG}"
+            stage('Deploy to Test') {
+                steps {
+                    script {
+                        echo "Stopping existing test container (if any)..."
+                        bat '''
+                        docker-compose -f docker-compose.test.yml down || echo "No existing container to stop"
+                        '''
+                        
+                        echo "Starting test environment container(s)..."
+                        bat "docker-compose -f docker-compose.test.yml up -d"
+                        
+                        echo "Checking health status..."
+                        def retries = 5
+                        def success = false
+                        for (int i = 0; i < retries; i++) {
+                            def status = bat(
+                                script: 'docker inspect --format="{{json .State.Health.Status}}" music-backend',
+                                returnStdout: true
+                            ).trim()
+                            
+                            if (status == '"healthy"') {
+                                success = true
+                                break
+                            }
+                            
+                            echo "Waiting for container to become healthy... retry ${i + 1}/${retries}"
+                            sleep(time: 15, unit: 'SECONDS')
+                        }
+                        
+                        if (!success) {
+                            error("Deployment failed: container did not become healthy within timeout.")
+                        } else {
+                            echo "Deployment successful and container is healthy."
+                        }
+                    }
+                }
             }
-        }
+
         
         stage('Install jq') {
             steps {
