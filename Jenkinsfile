@@ -79,6 +79,7 @@ pipeline {
             echo "Starting test environment container(s)..."
             bat 'docker-compose -f docker-compose.test.yml up -d'
 
+            // Check if container exists before health check loop
             def containerExists = bat(
                 script: 'docker ps -q -f name=music-pipeline-music-backend-1',
                 returnStdout: true
@@ -91,16 +92,22 @@ pipeline {
             echo "Waiting for container health check to pass..."
             def maxRetries = 20
             def counter = 0
-            def health = "starting"
+            def health = ""
 
-            while (health != "healthy" && counter < maxRetries) {
-                sleep 15
+            while (counter < maxRetries) {
                 def output = bat(
                     script: 'docker inspect --format="{{.State.Health.Status}}" music-pipeline-music-backend-1',
                     returnStdout: true
                 ).trim()
-                echo "Health status: ${output}"
                 health = output.replaceAll('"', '').trim()
+
+                echo "Health status: ${health}"
+
+                if (health == "healthy") {
+                    break
+                }
+
+                sleep 15
                 counter++
             }
 
@@ -124,9 +131,11 @@ pipeline {
                 ).trim()
 
                 echo "HTTP health endpoint status: ${httpStatus}"
+
                 if (httpStatus == "200") {
                     httpSuccess = true
                 }
+
                 httpCounter++
             }
 
@@ -140,6 +149,7 @@ pipeline {
         }
     }
 }
+
 
         
         stage('Install jq') {
