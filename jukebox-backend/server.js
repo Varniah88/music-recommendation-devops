@@ -70,6 +70,10 @@ app.use('/', viewRoutes);
 app.use('/api/playlist', collabPlaylistRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+app.get('/health', (req, res) => {
+  res.sendStatus(200);
+});
+
 // WebSocket Chat
 require('./socket/chat')(io);
 
