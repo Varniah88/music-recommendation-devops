@@ -79,13 +79,23 @@ pipeline {
             echo "Starting test environment container(s)..."
             bat 'docker-compose -f docker-compose.test.yml up -d'
 
+            // Check if container exists before health check loop
+            def containerExists = bat(
+                script: 'docker ps -q -f name=music-pipeline-music-backend-1',
+                returnStdout: true
+            ).trim()
+
+            if (!containerExists) {
+                error "Container not found: music-pipeline-music-backend-1"
+            }
+
             echo "Waiting for container health check to pass..."
-            def maxRetries = 10
+            def maxRetries = 20
             def counter = 0
             def health = "starting"
 
             while (health != "healthy" && counter < maxRetries) {
-                sleep 10
+                sleep 15
                 def output = bat(
                     script: 'docker inspect --format="{{.State.Health.Status}}" music-pipeline-music-backend-1',
                     returnStdout: true
@@ -99,12 +109,34 @@ pipeline {
                 error "Container did not become healthy in time."
             }
 
-            echo "Container is healthy. Proceeding to next stage..."
+            echo "Container is healthy. Verifying HTTP health endpoint..."
+
+            def maxHttpRetries = 10
+            def httpCounter = 0
+            def httpSuccess = false
+
+            while (!httpSuccess && httpCounter < maxHttpRetries) {
+                sleep 10
+                def httpStatus = bat(
+                    script: 'curl -s -o nul -w "%{http_code}" http://localhost:3000/health',
+                    returnStdout: true
+                ).trim()
+
+                echo "HTTP health endpoint status: ${httpStatus}"
+                if (httpStatus == "200") {
+                    httpSuccess = true
+                }
+                httpCounter++
+            }
+
+            if (!httpSuccess) {
+                error "Health endpoint did not respond with 200 in time."
+            }
+
+            echo "Health endpoint verified. Proceeding to next stage..."
         }
     }
 }
-
-
         
         stage('Install jq') {
             steps {
