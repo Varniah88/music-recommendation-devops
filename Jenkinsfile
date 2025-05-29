@@ -87,7 +87,7 @@ pipeline {
             while (health != "healthy" && counter < maxRetries) {
                 sleep 10
                 def output = bat(
-                    script: 'docker inspect --format="{{.State.Health.Status}}" music-recommendation-music-backend-1',
+                    script: 'docker inspect --format="{{.State.Health.Status}}" music-pipeline-music-backend-1',
                     returnStdout: true
                 ).trim()
                 echo "Health status: ${output}"
