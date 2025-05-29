@@ -70,7 +70,7 @@ pipeline {
 }
 
 
-            stage('Deploy to Test') {
+stage('Deploy to Test') {
     steps {
         script {
             echo "Stopping existing test container (if any)..."
@@ -79,21 +79,12 @@ pipeline {
             echo "Starting test environment container(s)..."
             bat 'docker-compose -f docker-compose.test.yml up -d'
 
-            // Check if container exists before health check loop
-            def containerExists = bat(
-                script: 'docker ps -q -f name=music-pipeline-music-backend-1',
-                returnStdout: true
-            ).trim()
-
-            if (!containerExists) {
-                error "Container not found: music-pipeline-music-backend-1"
-            }
-
-            echo "Waiting for container health check to pass..."
+            // Health check loop
             def maxRetries = 20
             def counter = 0
             def health = ""
 
+            echo "Waiting for container health check to pass..."
             while (counter < maxRetries) {
                 def output = bat(
                     script: 'docker inspect --format="{{.State.Health.Status}}" music-pipeline-music-backend-1',
@@ -104,6 +95,7 @@ pipeline {
                 echo "Health status: ${health}"
 
                 if (health == "healthy") {
+                    echo "Container is healthy, exiting health check loop."
                     break
                 }
 
@@ -117,12 +109,12 @@ pipeline {
                 error "Container did not become healthy in time."
             }
 
-            echo "Container is healthy. Verifying HTTP health endpoint..."
-
+            // HTTP health endpoint check
             def maxHttpRetries = 10
             def httpCounter = 0
             def httpSuccess = false
 
+            echo "Checking HTTP health endpoint status..."
             while (!httpSuccess && httpCounter < maxHttpRetries) {
                 sleep 10
                 def httpStatus = bat(
@@ -149,6 +141,7 @@ pipeline {
         }
     }
 }
+
 
 
         
