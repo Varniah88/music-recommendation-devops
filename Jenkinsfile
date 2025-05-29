@@ -101,7 +101,7 @@ pipeline {
                     returnStdout: true
                 ).trim()
                 echo "Health status: ${output}"
-                health = output
+                health = output.replaceAll('"', '').trim()
                 counter++
             }
 
