@@ -52,6 +52,23 @@ pipeline {
             }
         }
 
+        stage('Prepare .env file') {
+            steps {
+                bat '''
+                    PORT=3000
+                    MONGO_URL=mongodb+srv://jukeboxuser:jukeboxuser@jukeboxdb.v158hmf.mongodb.net/JUKEBOXDB?retryWrites=true&w=majority&appName=JukeBoxDB
+                    MONGO_SECRET_KEY=12345678901234567890123456789012
+                    JWT_SECRET=MyS3cr3tJwT_K3y!
+                    SPOTIFY_CLIENT_ID=715291451b004afdae8c8fd356e3c22e
+                    SPOTIFY_CLIENT_SECRET=6c0a6a201bdc4d6e9c05ec93238b6eab
+                    SPOTIFY_REDIRECT_URI=http://127.0.0.1:3000/api/auth/spotify/callback
+                    FRONTEND_URL=http://localhost:3000
+                    AWS_REGION=us-east-1
+                '''
+            }
+        }
+
+
             stage('Deploy to Test') {
     steps {
         script {
