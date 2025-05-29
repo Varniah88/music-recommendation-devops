@@ -79,7 +79,6 @@ pipeline {
             echo "Starting test environment container(s)..."
             bat 'docker-compose -f docker-compose.test.yml up -d'
 
-            // Check if container exists before health check loop
             def containerExists = bat(
                 script: 'docker ps -q -f name=music-pipeline-music-backend-1',
                 returnStdout: true
@@ -106,6 +105,8 @@ pipeline {
             }
 
             if (health != "healthy") {
+                echo "Container failed health check. Printing logs..."
+                bat 'docker logs music-pipeline-music-backend-1'
                 error "Container did not become healthy in time."
             }
 
@@ -130,6 +131,8 @@ pipeline {
             }
 
             if (!httpSuccess) {
+                echo "Health endpoint did not respond with 200 in time."
+                bat 'docker logs music-pipeline-music-backend-1'
                 error "Health endpoint did not respond with 200 in time."
             }
 
@@ -137,6 +140,7 @@ pipeline {
         }
     }
 }
+
         
         stage('Install jq') {
             steps {
