@@ -69,11 +69,15 @@ pipeline {
             }
         }
 
-        stage('Deploy to Test') {
-    steps {
+    stage('Deploy to Test') {
+        steps {
         script {
-            echo "Stopping existing container..."
+            echo "Stopping existing containers and cleaning up..."
+            // Compose down to stop and remove containers/networks
             bat 'docker-compose -f docker-compose.test.yml down || echo "No container to stop"'
+
+            // Force remove any leftover container by name to avoid conflicts
+            bat "docker rm -f ${CONTAINER_NAME} || echo Container not found"
 
             echo "Starting test container..."
             bat 'docker-compose -f docker-compose.test.yml up -d'
