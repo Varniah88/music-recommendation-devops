@@ -6,7 +6,7 @@ pipeline {
         DOCKER_TAG = "latest"
         SONARQUBE_SERVER = 'SonarQube'
         CONTAINER_NAME = "music-backend-test"
-        AWS_DEFAULT_REGION = 'us-east-1'
+        AWS_DEFAULT_REGION = 'ap-southeast-2'
     }
 
     stages {
