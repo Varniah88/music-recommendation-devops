@@ -1,5 +1,6 @@
 services:
   music-backend:
+    container_name: music-backend-test
     image: music-backend:latest
     ports:
       - "3000:3000"

@@ -5,6 +5,7 @@ pipeline {
         IMAGE_NAME = "music-backend"
         DOCKER_TAG = "latest"
         SONARQUBE_SERVER = 'SonarQube'
+        CONTAINER_NAME = "music-backend-test"
     }
 
     stages {
@@ -53,98 +54,91 @@ pipeline {
         }
 
         stage('Prepare .env file') {
-    steps {
-       bat '''
-    echo PORT=3000 > .env
-    echo MONGO_URL=mongodb+srv://jukeboxuser:jukeboxuser@jukeboxdb.v158hmf.mongodb.net/JUKEBOXDB?retryWrites=true^&w=majority^&appName=JukeBoxDB >> .env
-    echo MONGO_SECRET_KEY=12345678901234567890123456789012 >> .env
-    echo JWT_SECRET=MyS3cr3tJwT_K3y! >> .env
-    echo SPOTIFY_CLIENT_ID=715291451b004afdae8c8fd356e3c22e >> .env
-    echo SPOTIFY_CLIENT_SECRET=6c0a6a201bdc4d6e9c05ec93238b6eab >> .env
-    echo SPOTIFY_REDIRECT_URI=http://127.0.0.1:3000/api/auth/spotify/callback >> .env
-    echo FRONTEND_URL=http://localhost:3000 >> .env
-    echo AWS_REGION=us-east-1 >> .env
-'''
-
-    }
-}
-
-
-stage('Deploy to Test') {
-    steps {
-        script {
-            echo "Stopping existing test container (if any)..."
-            bat 'docker-compose -f docker-compose.test.yml down || echo "No existing container to stop"'
-
-            echo "Starting test environment container(s)..."
-            bat 'docker-compose -f docker-compose.test.yml up -d'
-
-            // Health check loop
-            def maxRetries = 20
-            def counter = 0
-            def health = ""
-
-            echo "Waiting for container health check to pass..."
-            while (counter < maxRetries) {
-                def output = bat(
-                    script: 'docker inspect --format="{{.State.Health.Status}}" music-pipeline-music-backend-1',
-                    returnStdout: true
-                ).trim()
-                health = output.replaceAll('"', '').trim()
-
-                echo "Health status: ${health}"
-
-                if (health == "healthy") {
-                    echo "Container is healthy, exiting health check loop."
-                    break
-                }
-
-                sleep 15
-                counter++
+            steps {
+                bat '''
+                echo PORT=3000 > .env
+                echo MONGO_URL=mongodb+srv://jukeboxuser:jukeboxuser@jukeboxdb.v158hmf.mongodb.net/JUKEBOXDB?retryWrites=true^&w=majority^&appName=JukeBoxDB >> .env
+                echo MONGO_SECRET_KEY=12345678901234567890123456789012 >> .env
+                echo JWT_SECRET=MyS3cr3tJwT_K3y! >> .env
+                echo SPOTIFY_CLIENT_ID=715291451b004afdae8c8fd356e3c22e >> .env
+                echo SPOTIFY_CLIENT_SECRET=6c0a6a201bdc4d6e9c05ec93238b6eab >> .env
+                echo SPOTIFY_REDIRECT_URI=http://127.0.0.1:3000/api/auth/spotify/callback >> .env
+                echo FRONTEND_URL=http://localhost:3000 >> .env
+                echo AWS_REGION=us-east-1 >> .env
+                '''
             }
-
-            if (health != "healthy") {
-                echo "Container failed health check. Printing logs..."
-                bat 'docker logs music-pipeline-music-backend-1'
-                error "Container did not become healthy in time."
-            }
-
-            // HTTP health endpoint check
-            def maxHttpRetries = 10
-            def httpCounter = 0
-            def httpSuccess = false
-
-            echo "Checking HTTP health endpoint status..."
-            while (!httpSuccess && httpCounter < maxHttpRetries) {
-                sleep 10
-                def httpStatus = bat(
-                    script: 'curl -s -o nul -w "%{http_code}" http://localhost:3000/health',
-                    returnStdout: true
-                ).trim()
-
-                echo "HTTP health endpoint status: ${httpStatus}"
-
-                if (httpStatus == "200") {
-                    httpSuccess = true
-                }
-
-                httpCounter++
-            }
-
-            if (!httpSuccess) {
-                echo "Health endpoint did not respond with 200 in time."
-                bat 'docker logs music-pipeline-music-backend-1'
-                error "Health endpoint did not respond with 200 in time."
-            }
-
-            echo "Health endpoint verified. Proceeding to next stage..."
         }
-    }
-}
 
+        stage('Deploy to Test') {
+            steps {
+                script {
+                    echo "Stopping existing container..."
+                    bat 'docker-compose -f docker-compose.test.yml down || echo "No container to stop"'
 
+                    echo "Starting test container..."
+                    bat 'docker-compose -f docker-compose.test.yml up -d'
 
-        
+                    def maxRetries = 20
+                    def counter = 0
+                    def health = ""
+
+                    echo "Waiting for container health check to pass..."
+                    while (counter < maxRetries) {
+                        def output = bat(
+                            script: "docker inspect --format=\"{{.State.Health.Status}}\" ${CONTAINER_NAME}",
+                            returnStdout: true
+                        ).trim()
+
+                        echo "Raw health output: ${output}"
+                        health = output.replaceAll(/[^a-zA-Z]/, "").toLowerCase()
+                        echo "Sanitized health status: ${health}"
+
+                        if (health == "healthy") {
+                            echo "Container is healthy."
+                            break
+                        }
+
+                        sleep 15
+                        counter++
+                    }
+
+                    if (health != "healthy") {
+                        echo "Container failed health check. Logs:"
+                        bat "docker logs ${CONTAINER_NAME}"
+                        error "Container did not become healthy in time."
+                    }
+
+                    echo "Checking HTTP health endpoint..."
+                    def maxHttpRetries = 10
+                    def httpCounter = 0
+                    def httpSuccess = false
+
+                    while (!httpSuccess && httpCounter < maxHttpRetries) {
+                        sleep 10
+                        def httpStatus = bat(
+                            script: 'curl -s -o nul -w "%{http_code}" http://localhost:3000/health',
+                            returnStdout: true
+                        ).trim()
+
+                        echo "HTTP status: ${httpStatus}"
+
+                        if (httpStatus == "200") {
+                            httpSuccess = true
+                        }
+
+                        httpCounter++
+                    }
+
+                    if (!httpSuccess) {
+                        bat "docker logs ${CONTAINER_NAME}"
+                        error "Health endpoint did not respond with 200 in time."
+                    }
+
+                    echo "Deployment and health check successful."
+                }
+            }
+        }
+
         stage('Install jq') {
             steps {
                 bat '''
@@ -161,8 +155,8 @@ stage('Deploy to Test') {
                 DD_APP_KEY = credentials('DD_APP_KEY')
             }
             steps {
-               script {
-                    echo 'Querying Datadog for monitor status...'
+                script {
+                    echo 'Querying Datadog...'
                     def response = bat (
                         script: """
                             curl -s -H "DD-API-KEY: ${DD_API_KEY}" ^
@@ -172,17 +166,15 @@ stage('Deploy to Test') {
                         returnStdout: true
                     ).trim()
 
-                    echo "Number of monitors configured in Datadog: ${response}"
+                    echo "Monitors in Datadog: ${response}"
                 }
-
             }
         }
-
     }
 
     post {
         always {
-            echo 'Cleaning up Docker containers/images...'
+            echo 'Cleaning up Docker...'
             bat "docker container prune -f"
             bat "docker image prune -f"
         }
@@ -190,7 +182,7 @@ stage('Deploy to Test') {
             echo 'Pipeline completed successfully!'
         }
         failure {
-            echo 'Pipeline failed. Check logs.'
+            echo 'Pipeline failed. Check above logs.'
         }
     }
 }
