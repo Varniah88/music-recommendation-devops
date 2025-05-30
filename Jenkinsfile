@@ -128,6 +128,12 @@ pipeline {
             }
         }
 
+        stage('Approval for Production Deploy') {
+            steps {
+                input message: 'Approve deployment to production?', ok: 'Deploy'
+            }
+        }
+        
         stage('Release to Production') {
             steps {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']]) {
