@@ -54,7 +54,7 @@ pipeline {
             }
         }
 
-        stage('Prepare .env file') {
+        stage('Prepare ENV') {
             steps {
                 bat '''
                 echo PORT=3000 > .env
@@ -69,65 +69,82 @@ pipeline {
                 '''
             }
         }
- 
+
         stage('Deploy to Test') {
-    steps {
-        script {
-            def CONTAINER_NAME = "music-backend-test"
-            echo 'Stopping existing container and cleaning up...'
+            steps {
+                script {
+                    def CONTAINER_NAME = "music-backend-test"
+                    echo 'Stopping existing container and cleaning up...'
 
-            bat "docker-compose -f docker-compose.test.yml down || echo \"No container to stop\""
-            bat "docker rm -f ${CONTAINER_NAME} || echo Container not found"
+                    bat "docker-compose -f docker-compose.test.yml down || echo \"No container to stop\""
+                    bat "docker rm -f ${CONTAINER_NAME} || echo Container not found"
 
-            echo 'Starting test container...'
-            bat "docker-compose -f docker-compose.test.yml up -d"
-            bat "docker ps -a"
-            bat "docker logs ${CONTAINER_NAME} || echo No logs"
+                    echo 'Starting test container...'
+                    bat "docker-compose -f docker-compose.test.yml up -d"
+                    bat "docker ps -a"
+                    bat "docker logs ${CONTAINER_NAME} || echo No logs"
 
-            echo "Waiting for Docker container health status to become 'healthy'..."
-            def maxRetries = 20
-            def isHealthy = false
+                    echo "Waiting for Docker container health status to become 'healthy'..."
+                    def maxRetries = 20
+                    def isHealthy = false
 
-            for (int i = 0; i < maxRetries; i++) {
-                def rawOutput = bat(script: "docker inspect --format=\"{{.State.Health.Status}}\" ${CONTAINER_NAME}", returnStdout: true).trim()
-                def healthStatus = rawOutput.readLines().last().trim()
+                    for (int i = 0; i < maxRetries; i++) {
+                        def rawOutput = bat(script: "docker inspect --format=\"{{.State.Health.Status}}\" ${CONTAINER_NAME}", returnStdout: true).trim()
+                        def healthStatus = rawOutput.readLines().last().trim()
 
-                echo "Health check status: '${healthStatus}'"
+                        echo "Health check status: '${healthStatus}'"
 
-                if (healthStatus == 'healthy') {
-                    echo "Container is healthy!"
-                    isHealthy = true
-                    break
+                        if (healthStatus == 'healthy') {
+                            echo "Container is healthy!"
+                            isHealthy = true
+                            break
+                        }
+
+                        echo "Container not healthy yet, waiting 15 seconds..."
+                        sleep(time: 15, unit: 'SECONDS')
+                    }
+
+                    if (!isHealthy) {
+                        echo "Container failed to become healthy in time. Showing container logs:"
+                        bat "docker logs ${CONTAINER_NAME} || echo No logs"
+                        error("Container did not become healthy.")
+                    }
                 }
-
-                echo "Container not healthy yet, waiting 15 seconds..."
-                sleep(time: 15, unit: 'SECONDS')
-            }
-
-            if (!isHealthy) {
-                echo "Container failed to become healthy in time. Showing container logs:"
-                bat "docker logs ${CONTAINER_NAME} || echo No logs"
-                error("Container did not become healthy.")
             }
         }
-    }
-}
 
         stage('Deploy to ECS') {
-    steps {
-        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']]) {
-            bat """
-            aws configure set aws_access_key_id %AWS_ACCESS_KEY_ID%
-            aws configure set aws_secret_access_key %AWS_SECRET_ACCESS_KEY%
-            aws configure set default.region %AWS_DEFAULT_REGION%
+            steps {
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']]) {
+                    bat """
+                    aws configure set aws_access_key_id %AWS_ACCESS_KEY_ID%
+                    aws configure set aws_secret_access_key %AWS_SECRET_ACCESS_KEY%
+                    aws configure set default.region %AWS_DEFAULT_REGION%
 
-            REM Update ECS service to force new deployment
-            aws ecs update-service --cluster jukebox-music-backend-cluster --service jukebox-music-backend-service-6zl0jlhv --force-new-deployment
-            """
+                    REM Update ECS service to force new deployment
+                    aws ecs update-service --cluster jukebox-music-backend-cluster --service jukebox-music-backend-service-6zl0jlhv --force-new-deployment
+                    """
+                }
+            }
         }
-    }
-}
 
+        stage('Release to Production') {
+            steps {
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']]) {
+                    bat """
+                    aws configure set aws_access_key_id %AWS_ACCESS_KEY_ID%
+                    aws configure set aws_secret_access_key %AWS_SECRET_ACCESS_KEY%
+                    aws configure set default.region %AWS_DEFAULT_REGION%
+
+                    REM Trigger new deployment to production ECS service
+                    aws ecs update-service ^
+                        --cluster jukebox-music-backend-cluster ^
+                        --service jukebox-music-prod-backend-service ^
+                        --force-new-deployment
+                    """
+                }
+            }
+        }
 
         stage('Install jq') {
             steps {
