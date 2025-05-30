@@ -70,26 +70,22 @@ pipeline {
         }
 
     stage('Deploy to Test') {
-        steps {
+         steps {
         script {
             echo "Stopping existing containers and cleaning up..."
-            // Compose down to stop and remove containers/networks
             bat 'docker-compose -f docker-compose.test.yml down || echo "No container to stop"'
-
-            // Force remove any leftover container by name to avoid conflicts
-            bat "docker rm -f ${CONTAINER_NAME} || echo Container not found"
+            bat 'docker rm -f music-backend-test || echo Container not found'
 
             echo "Starting test container..."
             bat 'docker-compose -f docker-compose.test.yml up -d'
 
             def maxRetries = 20
-            def healthStatus = ""
             def isHealthy = false
 
             echo "Waiting for container health check to pass..."
             for (int i = 0; i < maxRetries; i++) {
                 def output = bat(
-                    script: "docker inspect --format=\"{{.State.Health.Status}}\" ${CONTAINER_NAME}",
+                    script: "docker inspect --format=\"{{.State.Health.Status}}\" music-backend-test",
                     returnStdout: true
                 ).trim()
 
@@ -107,7 +103,7 @@ pipeline {
 
             if (!isHealthy) {
                 echo "Container failed health check. Logs:"
-                bat "docker logs ${CONTAINER_NAME}"
+                bat "docker logs music-backend-test"
                 error "Container did not become healthy in time."
             }
 
@@ -116,7 +112,7 @@ pipeline {
             for (int j = 0; j < 10; j++) {
                 sleep 10
                 def httpStatus = bat(
-                    script: 'curl -s -o nul -w "%{http_code}" http://localhost:3000/health',
+                    script: 'curl -s -o NUL -w "%{http_code}" "http://localhost:3000/health"',
                     returnStdout: true
                 ).trim()
 
@@ -128,7 +124,7 @@ pipeline {
             }
 
             if (!httpSuccess) {
-                bat "docker logs ${CONTAINER_NAME}"
+                bat "docker logs music-backend-test"
                 error "Health endpoint did not respond with 200 in time."
             }
 
@@ -136,6 +132,7 @@ pipeline {
         }
     }
 }
+
 
 
         stage('Install jq') {
