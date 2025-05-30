@@ -74,7 +74,7 @@ pipeline {
                 script {
                     echo "Stopping existing container..."
                     bat 'docker-compose -f docker-compose.test.yml down || echo "No container to stop"'
-                    bat 'docker rm -f music-backend-test || echo "Container not found"'
+                    bat "docker rm -f ${CONTAINER_NAME} || echo Container not found"
 
                     echo "Starting test container..."
                     bat 'docker-compose -f docker-compose.test.yml up -d'
@@ -94,6 +94,7 @@ pipeline {
                         if (output.contains("healthy")) {
                             echo "Container is healthy."
                             isHealthy = true
+                            sleep 10 // Give the app a bit more time after healthy
                             break
                         } else {
                             echo "Container not healthy yet, waiting..."
@@ -102,7 +103,6 @@ pipeline {
                     }
 
                     if (!isHealthy) {
-                        echo "Container failed health check. Logs:"
                         bat "docker logs ${CONTAINER_NAME}"
                         error "Container did not become healthy in time."
                     }
@@ -112,11 +112,12 @@ pipeline {
                     for (int j = 0; j < 10; j++) {
                         sleep 10
                         def httpStatus = bat(
-                            script: 'curl -s -o NUL -w "%%{http_code}" "http://localhost:3000/health"',
+                            script: 'curl -s -o NUL -w "%{http_code}" http://localhost:3000/health',
                             returnStdout: true
                         ).trim()
 
-                        echo "HTTP status: ${httpStatus}"
+                        echo "Attempt ${j + 1}: HTTP status = ${httpStatus}"
+
                         if (httpStatus == "200") {
                             httpSuccess = true
                             break
