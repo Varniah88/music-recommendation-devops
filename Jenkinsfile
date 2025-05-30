@@ -6,6 +6,7 @@ pipeline {
         DOCKER_TAG = "latest"
         SONARQUBE_SERVER = 'SonarQube'
         CONTAINER_NAME = "music-backend-test"
+        AWS_DEFAULT_REGION = 'us-east-1'
     }
 
     stages {
@@ -108,6 +109,21 @@ pipeline {
                 bat "docker logs ${CONTAINER_NAME} || echo No logs"
                 error("Container did not become healthy.")
             }
+        }
+    }
+}
+
+        stage('Deploy to ECS') {
+    steps {
+        withCredentials([usernamePassword(credentialsId: 'aws-creds', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+            bat """
+            aws configure set aws_access_key_id %AWS_ACCESS_KEY_ID%
+            aws configure set aws_secret_access_key %AWS_SECRET_ACCESS_KEY%
+            aws configure set default.region %AWS_DEFAULT_REGION%
+
+            REM Update ECS service to force new deployment
+            aws ecs update-service --cluster jukebox-music-backend-cluster --service jukebox-music-backend-service-6zl0jlhv --force-new-deployment
+            """
         }
     }
 }
