@@ -70,74 +70,69 @@ pipeline {
         }
 
         stage('Deploy to Test') {
-            steps {
-                script {
-                    echo "Stopping existing container..."
-                    bat 'docker-compose -f docker-compose.test.yml down || echo "No container to stop"'
+    steps {
+        script {
+            echo "Stopping existing container..."
+            bat 'docker-compose -f docker-compose.test.yml down || echo "No container to stop"'
 
-                    echo "Starting test container..."
-                    bat 'docker-compose -f docker-compose.test.yml up -d'
+            echo "Starting test container..."
+            bat 'docker-compose -f docker-compose.test.yml up -d'
 
-                    def maxRetries = 20
-                    def counter = 0
-                    def health = ""
+            def maxRetries = 20
+            def healthStatus = ""
+            def isHealthy = false
 
-                    echo "Waiting for container health check to pass..."
-                    while (counter < maxRetries) {
-                        def output = bat(
-                            script: "docker inspect --format=\"{{.State.Health.Status}}\" ${CONTAINER_NAME}",
-                            returnStdout: true
-                        ).trim()
+            echo "Waiting for container health check to pass..."
+            for (int i = 0; i < maxRetries; i++) {
+                def output = bat(
+                    script: "docker inspect --format=\"{{.State.Health.Status}}\" ${CONTAINER_NAME}",
+                    returnStdout: true
+                ).trim()
 
-                        echo "Raw health output: ${output}"
-                        health = output.replaceAll(/[^a-zA-Z]/, "").toLowerCase()
-                        echo "Sanitized health status: ${health}"
+                echo "Health check raw output: '${output}'"
 
-                        if (health == "healthy") {
-                            echo "Container is healthy."
-                            break
-                        }
-
-                        sleep 15
-                        counter++
-                    }
-
-                    if (health != "healthy") {
-                        echo "Container failed health check. Logs:"
-                        bat "docker logs ${CONTAINER_NAME}"
-                        error "Container did not become healthy in time."
-                    }
-
-                    echo "Checking HTTP health endpoint..."
-                    def maxHttpRetries = 10
-                    def httpCounter = 0
-                    def httpSuccess = false
-
-                    while (!httpSuccess && httpCounter < maxHttpRetries) {
-                        sleep 10
-                        def httpStatus = bat(
-                            script: 'curl -s -o nul -w "%{http_code}" http://localhost:3000/health',
-                            returnStdout: true
-                        ).trim()
-
-                        echo "HTTP status: ${httpStatus}"
-
-                        if (httpStatus == "200") {
-                            httpSuccess = true
-                        }
-
-                        httpCounter++
-                    }
-
-                    if (!httpSuccess) {
-                        bat "docker logs ${CONTAINER_NAME}"
-                        error "Health endpoint did not respond with 200 in time."
-                    }
-
-                    echo "Deployment and health check successful."
+                if (output.contains("healthy")) {
+                    echo "Container is healthy."
+                    isHealthy = true
+                    break
+                } else {
+                    echo "Container not healthy yet, waiting..."
+                    sleep 15
                 }
             }
+
+            if (!isHealthy) {
+                echo "Container failed health check. Logs:"
+                bat "docker logs ${CONTAINER_NAME}"
+                error "Container did not become healthy in time."
+            }
+
+            echo "Checking HTTP health endpoint..."
+            def httpSuccess = false
+            for (int j = 0; j < 10; j++) {
+                sleep 10
+                def httpStatus = bat(
+                    script: 'curl -s -o nul -w "%{http_code}" http://localhost:3000/health',
+                    returnStdout: true
+                ).trim()
+
+                echo "HTTP status: ${httpStatus}"
+                if (httpStatus == "200") {
+                    httpSuccess = true
+                    break
+                }
+            }
+
+            if (!httpSuccess) {
+                bat "docker logs ${CONTAINER_NAME}"
+                error "Health endpoint did not respond with 200 in time."
+            }
+
+            echo "Deployment and health check successful."
         }
+    }
+}
+
 
         stage('Install jq') {
             steps {
