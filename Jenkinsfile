@@ -79,6 +79,9 @@ pipeline {
             echo "Starting test container..."
             bat 'docker-compose -f docker-compose.test.yml up -d'
 
+            bat 'docker ps -a'
+            bat "docker logs ${CONTAINER_NAME} || echo No logs"
+
             def maxRetries = 20
             def isHealthy = false
 
