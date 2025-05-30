@@ -65,7 +65,7 @@ pipeline {
                 echo SPOTIFY_CLIENT_SECRET=6c0a6a201bdc4d6e9c05ec93238b6eab >> .env
                 echo SPOTIFY_REDIRECT_URI=http://127.0.0.1:3000/api/auth/spotify/callback >> .env
                 echo FRONTEND_URL=http://localhost:3000 >> .env
-                echo AWS_REGION=us-east-1 >> .env
+                echo AWS_REGION=ap-southeast-2 >> .env
                 '''
             }
         }
